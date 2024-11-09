@@ -1,23 +1,62 @@
 {% extends 'store/main.html' %}
 {% load static %}
+
 {% block content %}
-<div class="row">
-	{% for product in products %}
-	<div class="col-lg-4">
-		<div class="image-container">
-			<img class="thumbnail product-image" src="{{product.imageURL}}">
-		</div>
-		<div class="box-element product">
-			<h6><strong>{{product.name}}</strong></h6>
-			<hr>
+<div class="container-fluid p-0">
 
-			<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-			
-			<a class="btn btn-outline-success" href="#">View</a>
-			<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+    <!-- Imagen que cubre toda la pantalla -->
+    <div class="hero-image">
+        <img src="{% static 'images/banner_product.jpg' %}" alt="Banner" class="img-fluid w-100" style="height: 100vh; object-fit: cover;">
+        <div class="hero-text">
+            <h1 class="text-center text-white">Proident occaecat</h1>
+            <p class="text-center text-white">Aliquip ex ea commodo consequat. Velit tempor, temporibus occaecat minim veniam laboris deserunt ex.</p>
+        </div>
+    </div>
+
+    <!-- Sección de Categorías -->
+    <section class="text-center my-5">
+        <h2>Categories of The Month</h2>
+        <p>Recusandae eum eaque est explicabo eos</p>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <a href="{% url 'store:category' category.id %}" class="category-link">
+                    {% if category.imageURL %}
+                        <img src="{{ category.imageURL }}" class="rounded-circle category-img mb-3" alt="{{ category.name }}">
+                    {% else %}
+                        <!-- Usa una imagen de reserva si no tienes una imagen para la categoría -->
+                        <img src="{% static 'store/images/default_category.png' %}" class="rounded-circle category-img mb-3" alt="{{ category.name }}">
+                    {% endif %}
+                    <h4>{{ category.name }}</h4>
+                </a>
+                <a class="btn btn-outline-success mt-2" href="{% url 'store:category' category.id %}">Go Shop</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Sección de Productos Destacados -->
+    <section class="featured-products my-5">
+        <h2 class="text-center">Featured Products</h2>
+        <div class="row">
+			{% for product in products %}
+			<div class="col-lg-4">
+				<div class="image-container">
+					<img class="thumbnail product-image" src="{{product.imageURL}}">
+				</div>
+				<div class="box-element product">
+					<h6><strong>{{product.name}}</strong></h6>
+					<hr>
+		
+					<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+					
+					<a class="btn btn-outline-success" href="#">View</a>
+					<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
-	</div>
-	{% endfor %}
+    </section>
+
 </div>
-
 {% endblock content %}

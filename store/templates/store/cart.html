@@ -1,21 +1,20 @@
 {% extends 'store/main.html' %}
 {% load static %}
+
 {% block content %}
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box-element">
-				<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+				<!-- Eliminar la carga de main.css, ya está incluida en main.html -->
+				<a class="btn btn-outline-dark" href="{% url 'store:store' %}">&#x2190; Continue Shopping</a>
 
-				<a  class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Continue Shopping</a>
-
-				<br>
-				<br>
+				<br><br>
 				<table class="table">
 					<tr>
-						<th><h5>Items: <strong>{{order.get_cart_items}}</strong></h5></th>
-						<th><h5>Total:<strong> ${{order.get_cart_total|floatformat:2}}</strong></h5></th>
+						<th><h5>Items: <strong>{{ order.get_cart_items }}</strong></h5></th>
+						<th><h5>Total: <strong>${{ order.get_cart_total|floatformat:2 }}</strong></h5></th>
 						<th>
-							<a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Hacer Pedido</a>
+							<a style="float:right; margin:5px;" class="btn btn-success" href="{% url 'store:checkout' %}">Hacer Pedido</a>
 						</th>
 					</tr>
 				</table>
@@ -31,33 +30,34 @@
 					<div style="flex:1"><strong>Quantity</strong></div>
 					<div style="flex:1"><strong>Total</strong></div>
 				</div>
+
 				{% for item in items %}
 				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
-					<div style="flex:2"><p>{{item.product.name}}</p></div>
-					<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
+					<div style="flex:2"><img class="row-image" src="{{ item.product.imageURL }}"></div>
+					<div style="flex:2"><p>{{ item.product.name }}</p></div>
+					<div style="flex:1"><p>${{ item.product.price|floatformat:2 }}</p></div>
 					<div style="flex:1">
-						<!-- Modificado: Nuevo contenedor para el control de cantidad -->
+						<!-- Contenedor para el control de cantidad -->
 						<div class="quantity-control">
 							<!-- Flecha arriba -->
 							<button class="quantity-arrow update-cart" 
-									data-product="{{item.product.id}}" 
-									data-action="add">
+								data-product="{{ item.product.id }}" 
+								data-action="add">
 								&#9650;
 							</button>
 							
 							<!-- Display de cantidad -->
-							<span class="quantity-display">{{item.quantity}}</span>
+							<span class="quantity-display">{{ item.quantity }}</span>
 							
 							<!-- Flecha abajo -->
 							<button class="quantity-arrow update-cart" 
-									data-product="{{item.product.id}}" 
-									data-action="remove">
+								data-product="{{ item.product.id }}" 
+								data-action="remove">
 								&#9660;
 							</button>
 						</div>
 					</div>
-					<div style="flex:1"><p>${{item.get_total|floatformat:2}}</p></div>
+					<div style="flex:1"><p>${{ item.get_total|floatformat:2 }}</p></div>
 				</div>
 				{% endfor %}
 			</div>

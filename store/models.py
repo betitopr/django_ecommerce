@@ -11,23 +11,39 @@ class Customer(models.Model):
 	def __str__(self):
 		return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='categories/', null=True, blank=True)  # Agrega un directorio de subida para las imágenes
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
 
 class Product(models.Model):
-	name = models.CharField(max_length=200)
-	price = models.FloatField()
-	digital = models.BooleanField(default=False,null=True, blank=True)
-	image = models.ImageField(null=True, blank=True)
+    name = models.CharField(max_length=200)
+    price = models.FloatField()
+    digital = models.BooleanField(default=False, null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    is_featured = models.BooleanField(default=False)   # Agregar el campo 'featured'
 
-	def __str__(self):
-		return self.name
+    def __str__(self):
+        return self.name
 
-	@property
-	def imageURL(self):
-		try:
-			url = self.image.url
-		except:
-			url = ''
-		return url
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
 
 class Order(models.Model):
 	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -37,7 +53,7 @@ class Order(models.Model):
 
 	def __str__(self):
 		return str(self.id)
-		
+
 	@property
 	def shipping(self):
 		shipping = False

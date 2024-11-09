@@ -1,0 +1,36 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  
+
+    <!-- Título de la Categoría -->
+    <section class="text-center my-5">
+        <h2>{{ category.name }}</h2>
+        <p>Browse through the amazing products available in this category.</p>
+        
+        <!-- Mostrar productos de la categoría -->
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="image-container">
+                    <img class="thumbnail product-image" src="{{ product.imageURL }}" alt="{{ product.name }}">
+                </div>
+                <div class="box-element product">
+                    <h6><strong>{{ product.name }}</strong></h6>
+                    <hr>
+                    <button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                    <a class="btn btn-outline-success" href="{% url 'store:product_detail' product.id %}">View</a>
+                    <h4 style="display: inline-block; float: right"><strong>${{ product.price }}</strong></h4>
+                </div>
+            </div>
+            {% empty %}
+            <p>No products found in this category.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock content %}
