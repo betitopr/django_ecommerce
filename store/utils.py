@@ -40,21 +40,25 @@ def cookieCart(request):
 			pass
 			
 	return {'cartItems':cartItems ,'order':order, 'items':items}
-
 def cartData(request):
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-		items = order.orderitem_set.all()
-		cartItems = order.get_cart_items
-	else:
-		cookieData = cookieCart(request)
-		cartItems = cookieData['cartItems']
-		order = cookieData['order']
-		items = cookieData['items']
+    if request.user.is_authenticated:
+        try:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+        except Customer.DoesNotExist:
+            # Crear un nuevo customer para el usuario o manejar el caso
+            customer = Customer.objects.create(user=request.user, name=request.user.username)
+            order = Order.objects.create(customer=customer, complete=False)
+            items = []
+            cartItems = 0
+    else:
+        items = []
+        order = {'get_cart_total':0, 'get_cart_items':0}
+        cartItems = order['get_cart_items']
 
-	return {'cartItems':cartItems ,'order':order, 'items':items}
-
+    return {'cartItems':cartItems, 'order':order, 'items':items}
 	
 def guestOrder(request, data):
 	name = data['form']['name']
@@ -83,3 +87,24 @@ def guestOrder(request, data):
 		)
 	return customer, order
 
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
+
+def registerPage(request):
+    form = UserCreationForm()
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Crear Customer automáticamente
+            Customer.objects.create(
+                user=user,
+                name=user.username,
+                email=user.email
+            )
+            login(request, user)
+            return redirect('store')
+            
+    context = {'form':form}
+    return render(request, 'store/register.html', context)
