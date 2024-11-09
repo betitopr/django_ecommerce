@@ -87,6 +87,16 @@
 	    </div>
 	  </div>
 	</nav>
+    {% block carousel_block %}
+	<!-- Carrusel de imágenes (solo en main.html) -->
+	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+		<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img src="{% static 'images/image1 .jpg' %}" class="d-block w-100" alt="...">
+			</div>
+		</div>
+	</div>
+	{% endblock carousel_block %}
 
      <div class="container">
             <br>
