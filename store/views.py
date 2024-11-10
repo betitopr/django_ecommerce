@@ -201,3 +201,38 @@ def create_customer(request):
 def product_list(request):
     products = Product.objects.all()  # Obtiene todos los productos de la base de datos
     return render(request, 'store/product_list.html', {'products': products})
+from django.http import JsonResponse
+from .models import Coupon
+from django.utils import timezone
+
+def apply_coupon(request):
+    if request.method == 'POST':
+        code = json.loads(request.body).get('code')
+        try:
+            coupon = Coupon.objects.get(
+                code=code,
+                valid_from__lte=timezone.now(),
+                valid_to__gte=timezone.now(),
+                active=True
+            )
+            
+            if request.user.is_authenticated:
+                order = Order.objects.get(customer=request.user.customer, complete=False)
+                order.coupon = coupon
+                order.discount = (order.get_cart_total * coupon.discount) / 100
+                order.save()
+                
+                return JsonResponse({
+                    'success': True,
+                    'discount': coupon.discount,
+                    'total': order.get_cart_total_after_discount,
+                    'message': f'Coupon applied successfully! {coupon.discount}% discount'
+                })
+            
+        except Coupon.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid or expired coupon code'
+            })
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request'})

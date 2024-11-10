@@ -51,7 +51,18 @@
                 <div id="paypal-button-container"></div>
             </div>
         </div>
-
+        <div class="box-element">
+            <form id="coupon-form" class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="coupon-code" placeholder="Enter coupon code">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Apply Coupon</button>
+                    </div>
+                </div>
+            </form>
+            <div id="coupon-message"></div>
+        </div>
+        
         <div class="col-lg-6">
             <div class="box-element">
                 <a class="btn btn-outline-dark" href="{% url 'store:cart' %}">&#x2190; Back to Cart</a>
@@ -67,7 +78,11 @@
                 </div>
                 {% endfor %}
                 <h5>Items: {{ order.get_cart_items }}</h5>
-                <h5>Total: ${{ order.get_cart_total|floatformat:2 }}</h5>
+<h5>Subtotal: ${{ order.get_cart_total|floatformat:2 }}</h5>
+{% if order.coupon %}
+    <h5>Discount ({{ order.coupon.discount }}%): -${{ order.discount|floatformat:2 }}</h5>
+{% endif %}
+<h5>Total: ${{ order.get_cart_total_after_discount|floatformat:2 }}</h5>
             </div>
         </div>
     </div>
@@ -183,5 +198,35 @@
                 window.location.href = "{% url 'store:store' %}";
             });
         }
+        // Agregar esto al script existente en checkout.html
+document.getElementById('coupon-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let couponCode = document.getElementById('coupon-code').value;
+    let messageDiv = document.getElementById('coupon-message');
+    
+    fetch('/apply-coupon/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+            'code': couponCode
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+            // Actualizar el total mostrado
+            total = data.total;
+            // Actualizar los elementos HTML que muestran el total
+            location.reload(); // O actualizar los elementos específicos sin recargar
+        } else {
+            messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+        }
+    });
+});
     </script>
 {% endblock content %}

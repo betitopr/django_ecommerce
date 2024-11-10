@@ -3,34 +3,208 @@
 
 {% block content %}
 <div class="container-fluid p-0">
-
-  
-
-    <!-- Título de la Categoría -->
-    <section class="text-center my-5">
-        <h2>{{ category.name }}</h2>
-        <p>Browse through the amazing products available in this category.</p>
-        
-        <!-- Mostrar productos de la categoría -->
-        <div class="row">
-            {% for product in products %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="image-container">
-                    <img class="thumbnail product-image" src="{{ product.imageURL }}" alt="{{ product.name }}">
+    <div class="row">
+        <div class="col-lg-3">
+            <!-- Sidebar de filtros simplificado -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Filtros</h5>
                 </div>
-                <div class="box-element product">
-                    <h6><strong>{{ product.name }}</strong></h6>
-                    <hr>
-                    <button data-product="{{ product.id }}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-                    <a class="btn btn-outline-success" href="{% url 'store:product_detail' product.id %}">View</a>
-                    <h4 style="display: inline-block; float: right"><strong>${{ product.price }}</strong></h4>
+                <div class="card-body">
+                    <!-- Filtro por precio -->
+                    <div class="mb-4">
+                        <h6 class="font-weight-bold">Precio</h6>
+                        <div class="form-group">
+                            <label for="price-range">Rango de precio:</label>
+                            <select class="form-control" id="price-range">
+                                <option value="all">Todos los precios</option>
+                                <option value="0-100">$0 - $100</option>
+                                <option value="100-150">$100 - $150</option>
+                                <option value="150-200">$150 - $200</option>
+                                <option value="200+">Más de $200</option>
+                            </select>
+                        </div>
+                        <div class="mt-3">
+                            <label>Precio personalizado:</label>
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control form-control-sm mr-2" id="min-price" placeholder="Min">
+                                <span>-</span>
+                                <input type="number" class="form-control form-control-sm ml-2" id="max-price" placeholder="Max">
+                            </div>
+                            <button class="btn btn-sm btn-primary mt-2" id="apply-price">Aplicar</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-danger btn-block" id="clear-filters">Limpiar Filtros</button>
                 </div>
             </div>
-            {% empty %}
-            <p>No products found in this category.</p>
-            {% endfor %}
         </div>
-    </section>
 
+        <div class="col-lg-9">
+            <!-- Barra superior de ordenamiento -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <span class="mr-2">Ordenar por:</span>
+                    <select class="form-control form-control-sm" id="sort-products" style="width: auto;">
+                        <option value="default">Relevancia</option>
+                        <option value="price-asc">Precio: Menor a Mayor</option>
+                        <option value="price-desc">Precio: Mayor a Menor</option>
+                        <option value="name-asc">Nombre: A-Z</option>
+                        <option value="name-desc">Nombre: Z-A</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Productos -->
+            <div class="row" id="products-container">
+                {% for product in products %}
+                <div class="col-md-4 mb-4 product-item" data-price="{{ product.price }}">
+                    <div class="card h-100">
+                        <div class="badge badge-danger position-absolute" style="top: 0.5rem; right: 0.5rem">
+                            {% if product.discount %}
+                                -{{ product.discount }}%
+                            {% endif %}
+                        </div>
+                        <img src="{{ product.imageURL }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ product.name }}</h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if product.discount %}
+                                        <span class="text-muted"><del>${{ product.original_price }}</del></span>
+                                    {% endif %}
+                                    <span class="text-danger font-weight-bold">${{ product.price }}</span>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm add-to-cart" 
+                                        data-product="{{ product.id }}"
+                                        data-action="add">
+                                    Agregar al carrito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        No se encontraron productos que coincidan con los filtros seleccionados.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Paginación -->
+            {% if products.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.previous_page_number }}">Anterior</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in products.paginator.page_range %}
+                    <li class="page-item {% if products.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ products.next_page_number }}">Siguiente</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+<style>
+.product-item .card {
+    transition: transform 0.2s;
+}
+
+.product-item .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Variables
+    const productsContainer = document.getElementById('products-container');
+    const priceRange = document.getElementById('price-range');
+    const minPrice = document.getElementById('min-price');
+    const maxPrice = document.getElementById('max-price');
+    const applyPriceBtn = document.getElementById('apply-price');
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    const sortSelect = document.getElementById('sort-products');
+    
+    // Función para filtrar productos
+    function filterProducts() {
+        const products = document.querySelectorAll('.product-item');
+        
+        products.forEach(product => {
+            let show = true;
+            const price = parseFloat(product.dataset.price);
+            
+            // Filtro por rango de precio
+            if (priceRange.value !== 'all') {
+                const [min, max] = priceRange.value.split('-').map(val => val === '+' ? Infinity : parseFloat(val));
+                show = show && (price >= min && (max === Infinity || price <= max));
+            }
+            
+            // Filtro por precio personalizado
+            if (minPrice.value && maxPrice.value) {
+                show = show && (price >= parseFloat(minPrice.value) && price <= parseFloat(maxPrice.value));
+            }
+            
+            product.style.display = show ? '' : 'none';
+        });
+    }
+    
+    // Función para ordenar productos
+    function sortProducts() {
+        const products = Array.from(document.querySelectorAll('.product-item'));
+        const container = document.getElementById('products-container');
+        
+        products.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price);
+            const priceB = parseFloat(b.dataset.price);
+            
+            switch(sortSelect.value) {
+                case 'price-asc':
+                    return priceA - priceB;
+                case 'price-desc':
+                    return priceB - priceA;
+                case 'name-asc':
+                    return a.querySelector('.card-title').textContent.localeCompare(b.querySelector('.card-title').textContent);
+                case 'name-desc':
+                    return b.querySelector('.card-title').textContent.localeCompare(a.querySelector('.card-title').textContent);
+                default:
+                    return 0;
+            }
+        });
+        
+        container.innerHTML = '';
+        products.forEach(product => container.appendChild(product));
+    }
+    
+    // Event Listeners
+    priceRange.addEventListener('change', filterProducts);
+    applyPriceBtn.addEventListener('click', filterProducts);
+    sortSelect.addEventListener('change', sortProducts);
+    
+    clearFiltersBtn.addEventListener('click', () => {
+        priceRange.value = 'all';
+        minPrice.value = '';
+        maxPrice.value = '';
+        sortSelect.value = 'default';
+        filterProducts();
+    });
+});
+</script>
 {% endblock content %}

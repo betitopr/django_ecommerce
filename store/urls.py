@@ -18,4 +18,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('category/<int:id>/', views.category, name='category'),
     path('product/<int:id>/', views.product_detail, name='product_detail'),
+    path('apply-coupon/', views.apply_coupon, name='apply_coupon'),
+
 ]
