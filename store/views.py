@@ -88,8 +88,22 @@ def store(request):
 def category(request, id):
     category = get_object_or_404(Category, id=id)
     products = Product.objects.filter(category=category)
-    return render(request, 'store/category.html', {'category': category, 'products': products})
+    
+    # Obtener los datos del carrito usando la función cartData
+    data = cartData(request)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
 
+    context = {
+        'category': category, 
+        'products': products,
+        'cartItems': cartItems,
+        'order': order,
+        'items': items
+    }
+    
+    return render(request, 'store/category.html', context)
 # Vista para el detalle de un producto
 def product_detail(request, id):
     product = Product.objects.get(id=id)  # Obtén el producto por ID

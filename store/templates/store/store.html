@@ -4,13 +4,60 @@
 {% block content %}
 <div class="container-fluid p-0">
 
-    <!-- Imagen que cubre toda la pantalla -->
-    <div class="hero-image">
-        <img src="{% static 'images/banner_product.jpg' %}" alt="Banner" class="img-fluid w-100" style="height: 100vh; object-fit: cover;">
-        <div class="hero-text">
-            <h1 class="text-center text-white">Proident occaecat</h1>
-            <p class="text-center text-white">Aliquip ex ea commodo consequat. Velit tempor, temporibus occaecat minim veniam laboris deserunt ex.</p>
+    <!-- Carrusel de Banner -->
+    <!-- Carrusel de Banner -->
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
         </div>
+
+        <div class="carousel-inner">
+            <!-- Primer slide - Imagen de tecnología -->
+            <div class="carousel-item active">
+                <div class="banner-slide">
+                    <img src="https://i.pinimg.com/1200x/3d/92/de/3d92de5b4a25710c2495838795938b92.jpg" alt="Tecnología" class="banner-image">
+                    <div class="banner-content">
+                        <h2 class="animate__animated animate__fadeInDown">Tecnología de Última Generación</h2>
+                        <p class="animate__animated animate__fadeInUp">Descubre lo último en innovación tecnológica</p>
+                        <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInUp">Explorar</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segundo slide - Imagen gaming -->
+            <div class="carousel-item">
+                <div class="banner-slide">
+                    <img src="https://i.pinimg.com/1200x/42/b6/7a/42b67aacb13100865a792a92c8123efd.jpg" alt="Gaming" class="banner-image">
+                    <div class="banner-content">
+                        <h2 class="animate__animated animate__fadeInDown">Gaming Zone</h2>
+                        <p class="animate__animated animate__fadeInUp">Equípate con lo mejor para tus partidas</p>
+                        <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInUp">Ver Productos</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tercer slide - Imagen accesorios -->
+            <div class="carousel-item">
+                <div class="banner-slide">
+                    <img src="https://i.pinimg.com/736x/37/0e/32/370e320ace88bd69d3224df34dab0fb1.jpg" alt="Accesorios" class="banner-image">
+                    <div class="banner-content">
+                        <h2 class="animate__animated animate__fadeInDown">Accesorios Premium</h2>
+                        <p class="animate__animated animate__fadeInUp">Complementa tu setup con estilo</p>
+                        <a href="#" class="btn btn-primary btn-lg animate__animated animate__fadeInUp">Descubrir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
     </div>
 
     <!-- Sección de Categorías -->
@@ -59,4 +106,28 @@
     </section>
 
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar el carrusel
+        var carousel = new bootstrap.Carousel(document.getElementById('mainCarousel'), {
+            interval: 5000,
+            wrap: true
+        });
+    
+        // Reiniciar animaciones cuando cambie el slide
+        document.getElementById('mainCarousel').addEventListener('slide.bs.carousel', function () {
+            const animations = document.querySelectorAll('.animate__animated');
+            animations.forEach(animation => {
+                animation.style.opacity = 0;
+            });
+        });
+    
+        document.getElementById('mainCarousel').addEventListener('slid.bs.carousel', function () {
+            const animations = document.querySelectorAll('.animate__animated');
+            animations.forEach(animation => {
+                animation.style.opacity = 1;
+            });
+        });
+    });
+    </script>
 {% endblock content %}

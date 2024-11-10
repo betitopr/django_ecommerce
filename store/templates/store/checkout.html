@@ -1,10 +1,6 @@
 {% extends 'store/main.html' %}
 {% load static %}
 
-{% block carousel_block %}
-
-{% endblock carousel_block %}
-
 {% block content %}
     <div class="row">
         <div class="col-lg-6">
@@ -20,7 +16,6 @@
                     </div>
                     
                     <div id="shipping-info">
-                        
                         <p>Información de envío:</p>
                         <hr>
                         <div class="form-field">
@@ -41,6 +36,17 @@
                     </div>
 
                     <hr>
+                    <!-- Sección de cupón rediseñada -->
+                    <div class="coupon-section mb-3">
+                        <p class="small mb-2">¿Tienes un cupón de descuento?</p>
+                        <form id="coupon-form" class="d-flex">
+                            <input type="text" class="form-control form-control-sm mr-2" id="coupon-code" placeholder="Código del cupón">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit">Aplicar</button>
+                        </form>
+                        <div id="coupon-message" class="small mt-2"></div>
+                    </div>
+                    <hr>
+
                     <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continuar">
                 </form>
             </div>
@@ -51,41 +57,58 @@
                 <div id="paypal-button-container"></div>
             </div>
         </div>
-        <div class="box-element">
-            <form id="coupon-form" class="mb-3">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="coupon-code" placeholder="Ingresar Cupon">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Aplicar Cupon</button>
-                    </div>
-                </div>
-            </form>
-            <div id="coupon-message"></div>
-        </div>
         
         <div class="col-lg-6">
-            <div class="box-element">
-                <a class="btn btn-outline-dark" href="{% url 'store:cart' %}">&#x2190; Volver al carrito</a>
-                <hr>
-                <h3>Resumen del Pedido</h3>
-                <hr>
-                {% for item in items %}
-                <div class="cart-row">
-                    <div style="flex:2"><img class="row-image" src="{{ item.product.imageURL }}"></div>
-                    <div style="flex:2"><p>{{ item.product.name }}</p></div>
-                    <div style="flex:1"><p>${{ item.product.price|floatformat:2 }}</p></div>
-                    <div style="flex:1"><p>x{{ item.quantity }}</p></div>
+            <div class="box-element order-summary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a class="btn btn-outline-dark" href="{% url 'store:cart' %}">&#x2190; Volver al carrito</a>
+                    <h3 class="mb-0">Resumen del Pedido</h3>
                 </div>
-                {% endfor %}
-                <h5>Items: {{ order.get_cart_items }}</h5>
-                <h5>Subtotal: ${{ order.get_cart_total|floatformat:2 }}</h5>
+                <hr>
+                
+                <!-- Contenedor de items con scroll horizontal -->
+                <div class="items-container">
+                    <div class="items-wrapper">
+                        {% for item in items %}
+                        <div class="cart-item-card">
+                            <img class="item-image" src="{{ item.product.imageURL }}" alt="{{ item.product.name }}">
+                            <div class="item-details">
+                                <h6 class="item-name">{{ item.product.name }}</h6>
+                                <div class="item-price-qty">
+                                    <span class="price">${{ item.product.price|floatformat:2 }}</span>
+                                    <span class="quantity">x{{ item.quantity }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Resumen de totales -->
+                <div class="order-totals mt-3">
+                    <div class="total-row">
+                        <span>Items:</span>
+                        <span>{{ order.get_cart_items }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span>${{ order.get_cart_total|floatformat:2 }}</span>
+                    </div>
                     {% if order.coupon %}
-                <h5>Descuento ({{ order.coupon.discount }}%): -${{ order.discount|floatformat:2 }}</h5>
-                        {% endif %}
-                <h5>Total: ${{ order.get_cart_total_after_discount|floatformat:2 }}</h5>
+                    <div class="total-row discount">
+                        <span>Descuento ({{ order.coupon.discount }}%):</span>
+                        <span class="text-danger">-${{ order.discount|floatformat:2 }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="total-row grand-total">
+                        <span>Total:</span>
+                        <span>${{ order.get_cart_total_after_discount|floatformat:2 }}</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!-- PayPal SDK -->
     <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
@@ -198,7 +221,7 @@
                 window.location.href = "{% url 'store:store' %}";
             });
         }
-        // Agregar esto al script existente en checkout.html
+        
 document.getElementById('coupon-form').addEventListener('submit', function(e) {
     e.preventDefault();
     

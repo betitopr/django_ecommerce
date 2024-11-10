@@ -80,6 +80,7 @@
                                         data-action="add">
                                     Agregar al carrito
                                 </button>
+                                
                             </div>
                         </div>
                     </div>
@@ -205,6 +206,56 @@ document.addEventListener('DOMContentLoaded', function() {
         sortSelect.value = 'default';
         filterProducts();
     });
+// Función para actualizar el carrito
+function updateUserOrder(productId, action) {
+        const url = '/update_item/';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({
+                'productId': productId,
+                'action': action
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Función para obtener el token CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Agregar event listeners a todos los botones de "Agregar al carrito"
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.product;
+            const action = this.dataset.action;
+            updateUserOrder(productId, action);
+        });
+    });
 });
+
 </script>
 {% endblock content %}
