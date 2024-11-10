@@ -67,10 +67,10 @@
 			</ul>
 			<div class="form-inline my-2 my-lg-0">
 				{% if request.user.is_authenticated %}
-					<span class="text-white mr-3">Hello, {{ request.user.username }}!</span>
-					<a href="{% url 'store:logout' %}" class="btn btn-warning">Logout</a>
+					<span class="text-white mr-3">Hola, {{ request.user.username }}!</span>
+					<a href="{% url 'store:logout' %}" class="btn btn-warning">Cerrar Sesion</a>
 				{% else %}
-					<a href="{% url 'store:login' %}" class="btn btn-warning">Login</a>
+					<a href="{% url 'store:login' %}" class="btn btn-warning">Iniciar Sesion</a>
 				{% endif %}
 	
 				<a href="{% url 'store:cart' %}">

@@ -15,8 +15,8 @@
 
     <!-- Sección de Categorías -->
     <section class="text-center my-5">
-        <h2>Categories of The Month</h2>
-        <p>Recusandae eum eaque est explicabo eos</p>
+        <h2>Categorias del mes</h2>
+        <p>Explora lo que tenemos por ofrecerte </p>
         <div class="row">
             {% for category in categories %}
             <div class="col-lg-4 col-md-6 mb-4">
@@ -29,7 +29,7 @@
                     {% endif %}
                     <h4>{{ category.name }}</h4>
                 </a>
-                <a class="btn btn-outline-success mt-2" href="{% url 'store:category' category.id %}">Go Shop</a>
+                <a class="btn btn-outline-success mt-2" href="{% url 'store:category' category.id %}">ir a Comprar</a>
             </div>
             {% endfor %}
         </div>
@@ -37,7 +37,7 @@
 
     <!-- Sección de Productos Destacados -->
     <section class="featured-products my-5">
-        <h2 class="text-center">Featured Products</h2>
+        <h2 class="text-center">Productos destacados</h2>
         <div class="row">
 			{% for product in products %}
 			<div class="col-lg-4">
@@ -48,9 +48,9 @@
 					<h6><strong>{{product.name}}</strong></h6>
 					<hr>
 		
-					<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+					<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Añadir al carro</button>
 					
-					<a class="btn btn-outline-success" href="#">View</a>
+					<a class="btn btn-outline-success" href="#">Ver</a>
 					<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
 				</div>
 			</div>

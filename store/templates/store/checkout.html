@@ -20,43 +20,43 @@
                     </div>
                     
                     <div id="shipping-info">
+                        
+                        <p>Información de envío:</p>
                         <hr>
-                        <p>Shipping Information:</p>
-                        <hr>
                         <div class="form-field">
-                            <input class="form-control" type="text" name="address" placeholder="Address..">
+                            <input class="form-control" type="text" name="address" placeholder="Direccion..">
                         </div>
                         <div class="form-field">
-                            <input class="form-control" type="text" name="city" placeholder="City..">
+                            <input class="form-control" type="text" name="city" placeholder="Ciudad..">
                         </div>
                         <div class="form-field">
-                            <input class="form-control" type="text" name="state" placeholder="State..">
+                            <input class="form-control" type="text" name="state" placeholder="Estado..">
                         </div>
                         <div class="form-field">
-                            <input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+                            <input class="form-control" type="text" name="zipcode" placeholder="Codigo Postal..">
                         </div>
                         <div class="form-field">
-                            <input class="form-control" type="text" name="country" placeholder="Country..">
+                            <input class="form-control" type="text" name="country" placeholder="Pais..">
                         </div>
                     </div>
 
                     <hr>
-                    <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+                    <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continuar">
                 </form>
             </div>
 
             <br>
             <div class="box-element hidden" id="payment-info">
-                <small>Paypal Options</small>
+                <small>Opciones Paypal</small>
                 <div id="paypal-button-container"></div>
             </div>
         </div>
         <div class="box-element">
             <form id="coupon-form" class="mb-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="coupon-code" placeholder="Enter coupon code">
+                    <input type="text" class="form-control" id="coupon-code" placeholder="Ingresar Cupon">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit">Apply Coupon</button>
+                        <button class="btn btn-outline-secondary" type="submit">Aplicar Cupon</button>
                     </div>
                 </div>
             </form>
@@ -65,9 +65,9 @@
         
         <div class="col-lg-6">
             <div class="box-element">
-                <a class="btn btn-outline-dark" href="{% url 'store:cart' %}">&#x2190; Back to Cart</a>
+                <a class="btn btn-outline-dark" href="{% url 'store:cart' %}">&#x2190; Volver al carrito</a>
                 <hr>
-                <h3>Order Summary</h3>
+                <h3>Resumen del Pedido</h3>
                 <hr>
                 {% for item in items %}
                 <div class="cart-row">
@@ -78,11 +78,11 @@
                 </div>
                 {% endfor %}
                 <h5>Items: {{ order.get_cart_items }}</h5>
-<h5>Subtotal: ${{ order.get_cart_total|floatformat:2 }}</h5>
-{% if order.coupon %}
-    <h5>Discount ({{ order.coupon.discount }}%): -${{ order.discount|floatformat:2 }}</h5>
-{% endif %}
-<h5>Total: ${{ order.get_cart_total_after_discount|floatformat:2 }}</h5>
+                <h5>Subtotal: ${{ order.get_cart_total|floatformat:2 }}</h5>
+                    {% if order.coupon %}
+                <h5>Descuento ({{ order.coupon.discount }}%): -${{ order.discount|floatformat:2 }}</h5>
+                        {% endif %}
+                <h5>Total: ${{ order.get_cart_total_after_discount|floatformat:2 }}</h5>
             </div>
         </div>
     </div>
